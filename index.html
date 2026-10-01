@@ -2189,22 +2189,11 @@
             checkFirstVisitOnboarding();
         };
 
-        // TRADUTOR DE NOMES DE DIVISÃO (PROVAS, BIMESTRES, MÓDULOS E AULAS)
-        function getDivisaoNome(divisao) {
-            if (!divisao) return '';
-            const d = String(divisao).trim();
-            if (/^p\d+$/i.test(d)) return `${d.substring(1)}ª Prova`;
-            if (/^b\d+$/i.test(d)) return `${d.substring(1)}º Bimestre`;
-            if (/^aulas_m\d+$/i.test(d)) return `Aulas do Módulo ${d.replace(/^aulas_m/i, '')}`;
-            if (/^m\d+$/i.test(d)) return `${d.substring(1)}º Módulo`;
-            return d;
-        }
-
-        // CARREGAR ÍNDICE DE PROVAS DINAMICAMENTE
+        // CARREGAR ÍNDICE DE PROVAS DINAMICAMENTE (AJUSTADO PARA A RAIZ)
         function loadListaProvasIndex() {
-            fetch('provas/lista_provas.json')
+            fetch('lista_provas.json')
                 .then(res => {
-                    if (!res.ok) return fetch('lista_provas.json').then(r => r.json());
+                    if (!res.ok) throw new Error("Não foi possível carregar lista_provas.json");
                     return res.json();
                 })
                 .then(data => {
@@ -2221,44 +2210,23 @@
             const select = document.getElementById('select-prova');
             select.innerHTML = '';
 
-            if (!listaProvasIndex || listaProvasIndex.length === 0) {
+            if (listaProvasIndex.length === 0) {
                 select.innerHTML = '<option value="">Nenhuma prova cadastrada</option>';
                 return;
             }
 
-            // Agrupa por Matéria
-            const materiasMap = {};
             listaProvasIndex.forEach(prova => {
-                const mat = prova.materia || 'Outras';
-                if (!materiasMap[mat]) materiasMap[mat] = [];
-                materiasMap[mat].push(prova);
+                const opt = document.createElement('option');
+                opt.value = prova.id;
+                let tipoLabel = [];
+                if (prova.temObjetivas) tipoLabel.push('Objetiva');
+                if (prova.temDissertativas) tipoLabel.push('Dissertativa');
+                opt.innerText = `${prova.titulo} (${tipoLabel.join(' + ')})`;
+                select.appendChild(opt);
             });
 
-            for (const [materia, provas] of Object.entries(materiasMap)) {
-                const optgroup = document.createElement('optgroup');
-                optgroup.label = materia;
-
-                provas.forEach(prova => {
-                    const opt = document.createElement('option');
-                    opt.value = prova.id;
-                    
-                    const divNome = getDivisaoNome(prova.divisao || prova.bimestre);
-                    let tipos = [];
-                    if (prova.temObjetivas) tipos.push('Objetiva');
-                    if (prova.temDissertativas) tipos.push('Dissertativa');
-                    const tipoStr = tipos.length > 0 ? ` [${tipos.join(' + ')}]` : '';
-
-                    opt.innerText = `${prova.titulo}${divNome ? ' (' + divNome + ')' : ''}${tipoStr}`;
-                    optgroup.appendChild(opt);
-                });
-
-                select.appendChild(optgroup);
-            }
-
-            if (listaProvasIndex.length > 0) {
-                select.value = listaProvasIndex[0].id;
-                onProvaSelectChange(listaProvasIndex[0].id);
-            }
+            // Seleciona a primeira prova por padrão
+            onProvaSelectChange(listaProvasIndex[0].id);
         }
 
         function onProvaSelectChange(provaId) {
@@ -2267,24 +2235,22 @@
 
             selectedProvaMeta = prova;
             
-            const divNome = getDivisaoNome(prova.divisao || prova.bimestre);
-
             // Atualiza Interface do Hub
             document.getElementById('hub-display-title').innerText = prova.titulo;
             document.getElementById('hub-card-title').innerText = prova.titulo;
             
             let badges = [];
-            if (divNome) badges.push(`<i class="ph-bold ph-bookmark"></i> ${divNome}`);
             if (prova.temObjetivas) badges.push('<i class="ph-bold ph-check-square-offset"></i> Questões Objetivas');
             if (prova.temDissertativas) badges.push('<i class="ph-bold ph-text-align-left"></i> Questões Dissertativas');
             
             document.getElementById('card-type-badge').innerHTML = badges.join(' | ');
-            document.getElementById('hub-card-desc').innerText = `Matéria: ${prova.materia}${divNome ? ' • ' + divNome : ''}. O arquivo (${prova.arquivo}) será carregado ao iniciar.`;
+            document.getElementById('hub-card-desc').innerText = `Matéria: ${prova.materia}. O arquivo selecionado (${prova.arquivo}) será carregado ao iniciar.`;
             
             document.getElementById('sidebar-materia-title').innerText = prova.materia;
-            document.getElementById('sidebar-materia-sub').innerText = `${prova.titulo}${divNome ? ' (' + divNome + ')' : ''}`;
+            document.getElementById('sidebar-materia-sub').innerText = prova.titulo;
         }
 
+        // CARREGAR QUESTÕES DA PROVA (SUPORTA "questoes": [...] E NORMALIZA CHAVES PT/EN)
         function loadSelectedProvaQuestions(callback) {
             if (!selectedProvaMeta) return;
 
@@ -2294,30 +2260,28 @@
                     return res.json();
                 })
                 .then(data => {
-                    // Trata tanto Objeto com chave .questoes quanto Array direto
-                    const rawQuestions = Array.isArray(data) ? data : (data.questoes || []);
-                    
-                    // Normalização e Mapeamento de Chaves (PT-BR -> EN Interno)
+                    let rawQuestions = Array.isArray(data) ? data : (data.questoes || []);
+
                     currentQuestions = rawQuestions.map(q => {
-                        const rawType = (q.type || q.tipo || 'objetiva').toLowerCase();
-                        const isDissertative = rawType.includes('dissertat') || rawType.includes('discursiv');
+                        let tipoNormalizado = q.tipo || q.type;
+                        if (tipoNormalizado === 'objetiva') tipoNormalizado = 'objective';
+                        if (tipoNormalizado === 'dissertativa' || tipoNormalizado === 'discursiva') tipoNormalizado = 'dissertative';
+
                         return {
-                            num: q.num || q.numero,
-                            type: isDissertative ? 'dissertative' : 'objective',
-                            category: q.category || q.categoria || 'Geral',
-                            statement: q.statement || q.enunciado || '',
-                            options: q.options || q.opcoes || [],
-                            correct: q.correct !== undefined ? q.correct : (q.correta !== undefined ? q.correta : 0),
-                            context: q.context || q.explicacao || q.gabarito || q.resposta_esperada || '',
-                            media: q.media || null
+                            ...q,
+                            statement: q.enunciado || q.statement || "",
+                            options: q.opcoes || q.options || [],
+                            correct: q.correta !== undefined ? q.correta : q.correct,
+                            context: q.explicacao || q.context || q.gabarito || "",
+                            category: q.categoria || q.category || "Geral",
+                            type: tipoNormalizado || "objective"
                         };
                     });
 
                     if (callback) callback(true);
                 })
                 .catch(err => {
-                    console.error("Erro ao carregar questões:", err);
-                    alert(`Não foi possível carregar as questões de "${selectedProvaMeta.titulo}".\nCertifique-se que o arquivo "${selectedProvaMeta.arquivo}" existe no repositório.`);
+                    alert(`Não foi possível carregar as questões de "${selectedProvaMeta.titulo}".\nCertifique-se que o arquivo "${selectedProvaMeta.arquivo}" foi criado na pasta.`);
                     if (callback) callback(false);
                 });
         }
@@ -2629,7 +2593,7 @@
 
                 if (shuffleOpt) {
                     currentQuestions = currentQuestions.map(q => {
-                        if (q.type === 'objective' && q.options && q.options.length > 0) {
+                        if ((q.type === 'objective' || q.type === 'objetiva') && q.options) {
                             const originalCorrectText = q.options[q.correct];
                             const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
                             const newCorrect = shuffledOptions.indexOf(originalCorrectText);
@@ -2655,8 +2619,7 @@
                 isPenActive = false;
                 isEraserActive = false;
 
-                const divNome = getDivisaoNome(selectedProvaMeta.divisao || selectedProvaMeta.bimestre);
-                document.getElementById('quiz-title-badge').innerText = `${selectedProvaMeta.titulo.toUpperCase()}${divNome ? ' (' + divNome.toUpperCase() + ')' : ''}`;
+                document.getElementById('quiz-title-badge').innerText = `${selectedProvaMeta.titulo.toUpperCase()} (${gameMode.toUpperCase()})`;
                 document.getElementById('quiz-title-badge').style.color = 'var(--purple-primary)';
 
                 document.getElementById('hub-screen').style.display = 'none';
@@ -2747,7 +2710,7 @@
 
                 if (isAnswered) {
                     if (gameMode === 'estudo' || isFinished) {
-                        if (q.type === 'dissertative') {
+                        if (q.type === 'dissertative' || q.type === 'discursiva') {
                             btn.classList.add('answered-realista-q');
                         } else {
                             if (userAnswers[idx] === q.correct) btn.classList.add('correct-q');
@@ -2882,7 +2845,7 @@
             const answered = userAnswers[idx] !== null;
 
             // ADAPTAÇÃO: TIPO DE QUESTÃO (OBJETIVA VS DISSERTATIVA)
-            if (q.type === 'dissertative') {
+            if (q.type === 'dissertative' || q.type === 'discursiva') {
                 optsContainer.style.display = 'none';
                 dissertativeGroup.style.display = 'flex';
                 confBox.style.display = 'none';
@@ -2945,7 +2908,7 @@
 
             if (answered && (gameMode === 'estudo' || isFinished)) {
                 expPanel.style.display = 'block';
-                document.getElementById('exp-body').innerHTML = formatExplanationHTML(q.context);
+                document.getElementById('exp-body').innerHTML = formatExplanationHTML(q.context || q.gabarito);
             } else {
                 expPanel.style.display = 'none';
             }
@@ -3022,7 +2985,7 @@
         function confirmAnswer() {
             const q = currentQuestions[currentQIndex];
 
-            if (q.type === 'dissertative') {
+            if (q.type === 'dissertative' || q.type === 'discursiva') {
                 const textVal = document.getElementById('dissertative-input').value;
                 userAnswers[currentQIndex] = textVal || "Respondido / Lido";
                 score += 100;
@@ -3084,7 +3047,9 @@
 
                 if (userAnswers[i] !== null) {
                     answered++;
-                    if (q.type === 'dissertative' || userAnswers[i] === q.correct) {
+                    if (q.type === 'dissertative' || q.type === 'discursiva') {
+                        correct++;
+                    } else if (userAnswers[i] === q.correct) {
                         correct++;
                     }
                 }
@@ -3157,7 +3122,7 @@
             currentQuestions.forEach((q, i) => {
                 const ans = userAnswers[i];
                 if (ans === null) unanswered++;
-                else if (q.type === 'dissertative' || ans === q.correct) correct++;
+                else if (q.type === 'dissertative' || q.type === 'discursiva' || ans === q.correct) correct++;
                 else incorrect++;
             });
 
@@ -3218,7 +3183,7 @@
                 const ans = userAnswers[idx];
                 if (ans !== null) {
                     answered++;
-                    if (q.type === 'dissertative' || ans === q.correct) {
+                    if (q.type === 'dissertative' || q.type === 'discursiva' || ans === q.correct) {
                         correct++;
                         catStats[cat].correct++;
                         if (userConfidence[idx] === 'chute') guessCorrect++;
@@ -3412,7 +3377,7 @@
                 category: q.category || "Geral",
                 question: q.statement,
                 answer: q.type === 'dissertative' 
-                    ? `<b>Gabarito Espelho:</b><br>${q.context}`
+                    ? `<b>Gabarito Espelho:</b><br>${q.context || q.gabarito}`
                     : `<b>Resposta Correta: ${q.options[q.correct]}</b><br><br>${q.context}`,
                 nextReview: Date.now()
             };
@@ -3470,7 +3435,7 @@
 
             let correct = 0;
             currentQuestions.forEach((q, idx) => {
-                if (q.type === 'dissertative' || userAnswers[idx] === q.correct) correct++;
+                if (q.type === 'dissertative' || q.type === 'discursiva' || userAnswers[idx] === q.correct) correct++;
             });
             const pct = Math.round((correct / currentQuestions.length) * 100);
 
@@ -3609,7 +3574,7 @@
             currentQuestions.forEach((q, idx) => {
                 if (userAnswers[idx] !== null) {
                     answered++;
-                    if (q.type === 'dissertative' || userAnswers[idx] === q.correct) correct++;
+                    if (q.type === 'dissertative' || q.type === 'discursiva' || userAnswers[idx] === q.correct) correct++;
                 }
             });
 
@@ -3633,7 +3598,7 @@
 
                 const userAns = userAnswers[idx];
                 if (userAns !== null) {
-                    if (q.type === 'dissertative') {
+                    if (q.type === 'dissertative' || q.type === 'discursiva') {
                         status = 'DISSERTATIVA RESPONDIDA';
                         userContent = `Sua Resposta: ${userAns}`;
                     } else {
@@ -3735,4 +3700,3 @@
     </script>
 </body>
 </html>
-

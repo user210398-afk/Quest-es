@@ -36,8 +36,69 @@
     <div class="app-layout" id="app-layout">
         <!-- SIDEBAR (Mesmo código do Index original, mantido para navegação) -->
         <aside class="sidebar" id="sidebar">
-            <!-- Conteúdo da Sidebar Omitido para brevidade - Cole o conteúdo do seu aside aqui -->
+             <aside class="sidebar" id="sidebar" aria-label="Menu Lateral">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <div class="logo-icon"><i class="ph-bold ph-pill"></i></div>
+                    <span class="logo-text">MedHub</span>
+                </div>
+                <button class="sidebar-toggle-btn" id="btn-toggle-sidebar" onclick="toggleSidebar()" aria-label="Recolher / Expandir Menu" title="Recolher / Expandir Menu">
+                    <i class="ph-bold ph-sidebar-simple"></i>
+                </button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="javascript:void(0)" class="nav-item active" onclick="goToHub()" id="nav-hub">
+                    <i class="ph-bold ph-house"></i>
+                    <span>Menu Principal</span>
+                </a>
+                <a href="javascript:void(0)" class="nav-item" onclick="openFlashcardsScreen()" id="nav-flashcards">
+                    <i class="ph-bold ph-cards"></i>
+                    <span>Revisão Diária (Cards)</span>
+                </a>
+                <a href="javascript:void(0)" class="nav-item" onclick="openCadernoErrosSidebar()" id="nav-errors">
+                    <i class="ph-bold ph-x-circle"></i>
+                    <span>Caderno de Erros</span>
+                </a>
+                <a href="javascript:void(0)" class="nav-item" onclick="goToHistoryScreen()" id="nav-history">
+                    <i class="ph-bold ph-chart-line-up"></i>
+                    <span>Histórico & Conquistas</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-divider"></div>
+
+            <div class="sidebar-tools">
+                <div class="tools-title">Ferramentas</div>
+                <button class="tool-menu-btn" onclick="toggleDarkMode()" aria-label="Alternar Modo Escuro">
+                    <i class="ph-bold ph-moon" id="theme-toggle-icon"></i>
+                    <span id="theme-toggle-text">Modo Escuro</span>
+                </button>
+                <button class="tool-menu-btn" onclick="startOnboardingTour()" aria-label="Abrir Tour Guiado">
+                    <i class="ph-bold ph-compass"></i>
+                    <span>Tour Guiado</span>
+                </button>
+                <button class="tool-menu-btn" onclick="openSettingsModal()" aria-label="Configurações">
+                    <i class="ph-bold ph-sliders-horizontal"></i>
+                    <span>Configurações</span>
+                </button>
+                <button class="tool-menu-btn btn-layout-toggle-class" onclick="toggleMobileLayout()" aria-label="Alternar Layout Celular">
+                    <i class="ph-bold ph-device-mobile"></i>
+                    <span>Modo Celular: AUTO</span>
+                </button>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="user-badge-card">
+                    <i class="ph-bold ph-user-circle"></i>
+                    <div class="user-info">
+                        <span class="user-name">MedHub Student</span>
+                        <span class="user-role">Plataforma Médica</span>
+                    </div>
+                </div>
+            </div>
         </aside>
+
 
         <main class="main-content" id="main-content">
             <div class="main-container">

@@ -1,0 +1,107 @@
+/* ==========================================================================
+   1. VARIÁVEIS GLOBAIS E ROOT
+   ========================================================================== */
+:root {
+    --bg-canvas: #f8fafc;          
+    --card-bg: rgba(255, 255, 255, 0.88);            
+    --card-bg-solid: #ffffff;
+    --purple-primary: #2563eb;    
+    --purple-light: rgba(37, 99, 235, 0.08);      
+    --green-primary: #059669;     
+    --accent-yellow: #b45309; 
+    --text-main: #0f172a;         
+    --text-muted: #475569;        
+    --border-color: rgba(226, 232, 240, 0.9);      
+    --correct-green: #059669;
+    --incorrect-red: #dc2626;
+    --input-bg: rgba(248, 250, 252, 0.9);
+}
+
+/* MELHORIA DARK MODE (Tons pastéis para não vibrar os olhos) */
+body.dark-mode {
+    --bg-canvas: #090d16;
+    --card-bg: rgba(15, 23, 42, 0.75);
+    --card-bg-solid: #111827;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.08);
+    --correct-green: #6ee7b7; /* Tom pastel para conforto */
+    --correct-bg: rgba(52, 211, 153, 0.12);
+    --incorrect-red: #fca5a5; /* Tom pastel para conforto */
+    --incorrect-bg: rgba(248, 113, 113, 0.12);
+}
+
+/* ==========================================================================
+   2. ACESSIBILIDADE E BASE
+   ========================================================================== */
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+body { background-color: var(--bg-canvas); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
+
+/* Anel de foco A11y */
+:focus-visible {
+    outline: 3px solid var(--purple-primary) !important;
+    outline-offset: 3px !important;
+    border-radius: 4px;
+}
+
+/* ==========================================================================
+   3. COMPONENTES BENTO E ANIMAÇÕES
+   ========================================================================== */
+.bento-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px; }
+.bento-card { background: var(--card-bg-solid); border-radius: 20px; padding: 24px; border: 1px solid var(--border-color); position: relative; }
+
+@keyframes shakeError {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-8px); background-color: var(--incorrect-bg); }
+    40%, 80% { transform: translateX(8px); }
+}
+.shake-animated { animation: shakeError 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both; }
+
+/* ==========================================================================
+   4. NOVAS FEATURES (FOCUS MODE, LIGHTBOX E HIGHLIGHTER)
+   ========================================================================== */
+/* Focus Mode: Embaça o conteúdo para pausar leitura */
+body.focus-mode-active .bento-q-card {
+    filter: blur(8px) grayscale(100%);
+    pointer-events: none;
+    user-select: none;
+    transition: filter 0.3s ease;
+}
+
+/* Floating Menu (Kindle Style Highlighter) */
+.floating-menu {
+    display: none; position: absolute; z-index: 10000;
+    background: var(--card-bg-solid); border: 1px solid var(--border-color);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-radius: 10px; padding: 6px;
+    gap: 6px; flex-direction: row; align-items: center;
+}
+.floating-menu button {
+    background: transparent; border: none; font-size: 0.85rem; font-weight: 600;
+    padding: 6px 10px; border-radius: 6px; cursor: pointer; color: var(--text-main);
+}
+.floating-menu button:hover { background: var(--purple-light); color: var(--purple-primary); }
+.hl-word.yellow { background-color: rgba(250, 204, 21, 0.4); border-bottom: 2px solid #facc15; }
+
+/* Lightbox Modal para Imagens (Raio-X, ECG) */
+#lightbox-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 99999; justify-content: center; align-items: center; cursor: zoom-out; }
+#lightbox-img { max-width: 90%; max-height: 90%; border-radius: 12px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
+
+/* ==========================================================================
+   5. OTIMIZAÇÃO MOBILE (STICKY CONTROLS)
+   ========================================================================== */
+@media (max-width: 768px) {
+    .bento-q-card, .bento-chart-card, .bento-notes-card, .bento-grid-card { grid-column: span 12; }
+    
+    /* Mantém botões de navegação sempre acessíveis no celular */
+    .nav-btns-inline {
+        position: sticky;
+        bottom: 70px; /* Acima da bottom-nav nativa do app */
+        background: var(--card-bg-solid);
+        padding: 12px;
+        border-top: 1px solid var(--border-color);
+        box-shadow: 0 -10px 20px rgba(0,0,0,0.05);
+        z-index: 100;
+        margin: 20px -24px -24px -24px;
+        border-radius: 0 0 20px 20px;
+    }
+}

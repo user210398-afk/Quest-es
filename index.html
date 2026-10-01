@@ -1624,7 +1624,7 @@
         <main class="main-content" id="main-content">
             <div class="main-container">
 
-                <!-- TELA HOME / HUB CENTRAL -->
+                <!-- TELA HOME / HUB CENTRAL (EXATAMENTE COMO NO CÓDIGO ORIGINAL ANTERIOR) -->
                 <div class="hub-screen" id="hub-screen">
                     <div class="hub-header-bar">
                         <button class="action-btn action-btn-secondary" onclick="toggleDarkMode()" aria-label="Modo Escuro" style="padding: 8px 16px; font-size: 0.88rem;">
@@ -1640,12 +1640,12 @@
 
                     <div class="hub-title">Central de Simulados MedHub</div>
                     <div class="hub-subtitle">
-                        Selecione a matéria e navegue pelas categorias para iniciar seus estudos direcionados.
+                        Escolha o modo de estudo desejado para iniciar sua sessão de alta performance com gabarito imediato ou simulado realista.
                     </div>
 
                     <!-- SELETOR DE MODO DE JOGO & RANDOMIZAÇÃO -->
-                    <div class="mode-selector-box" style="align-items: center; text-align: center;">
-                        <div style="display: flex; gap: 8px; align-items: center; width: 100%; justify-content: center; flex-wrap: wrap;">
+                    <div class="mode-selector-box">
+                        <div style="display: flex; gap: 12px; align-items: center; width: 100%; justify-content: space-between; flex-wrap: wrap;">
                             <label for="game-mode-select" style="font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
                                 <i class="ph-bold ph-target" style="color: var(--purple-primary);"></i> Modo do Simulado:
                             </label>
@@ -1655,7 +1655,7 @@
                             </select>
                         </div>
                         
-                        <div style="display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; font-size: 0.88rem; font-weight: 600;">
+                        <div style="display: flex; gap: 16px; flex-wrap: wrap; justify-content: flex-start; font-size: 0.88rem; font-weight: 600; border-top: 1px solid var(--border-color); padding-top: 14px;">
                             <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
                                 <input type="checkbox" id="chk-shuffle-q"> Embaralhar Ordem das Questões
                             </label>
@@ -1665,55 +1665,12 @@
                         </div>
                     </div>
 
-                    <!-- BENTO BOX DOS MATÉRIAS -->
-                    <div id="hub-subject-selection">
-                        <h3 style="font-size: 1.25rem; font-weight: 800; text-align: left; margin-bottom: 16px; color: var(--text-main);">Selecione a Matéria:</h3>
-                        <div class="hub-bento-grid" id="subjects-bento-grid">
-                            <!-- Cards de matérias gerados dinamicamente via JS -->
-                        </div>
+                    <!-- BOTÃO DIRETO ORIGINAL DO SIMULADO DE FARMACOLOGIA -->
+                    <div style="max-width: 780px; margin: 0 auto;">
+                        <button class="btn-hub-action" onclick="startModule('objective')" aria-label="Iniciar Simulado de Farmacologia" style="font-size: 1.1rem; padding: 18px;">
+                            <i class="ph-bold ph-rocket-launch"></i> Iniciar Simulado de Farmacologia (42 Questões)
+                        </button>
                     </div>
-
-                    <!-- NAVEGAÇÃO HIERÁRQUICA SELECIONADA -->
-                    <div id="hub-hierarchy-selection" style="display: none;">
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 24px; margin-bottom: 16px;">
-                            <h3 id="selected-subject-title" style="font-size: 1.35rem; font-weight: 800; color: var(--text-main);">Matéria Selecionada</h3>
-                            <button class="action-btn action-btn-secondary" onclick="backToSubjects()" style="padding: 6px 14px; font-size: 0.85rem;">
-                                <i class="ph-bold ph-arrow-left"></i> Trocar Matéria
-                            </button>
-                        </div>
-
-                        <div class="hierarchy-container">
-                            <!-- PASSO 1: BIMESTRE -->
-                            <div class="hierarchy-step">
-                                <div class="hierarchy-step-title"><i class="ph-bold ph-calendar"></i> 1. Selecione o Bimestre</div>
-                                <div class="hierarchy-options-grid" id="grid-bimestres"></div>
-                            </div>
-
-                            <!-- PASSO 2: CATEGORIA DE FILTRO -->
-                            <div class="hierarchy-step" id="step-category" style="display: none;">
-                                <div class="hierarchy-step-title"><i class="ph-bold ph-funnel"></i> 2. Tipo de Conteúdo</div>
-                                <div class="hierarchy-options-grid" id="grid-categories">
-                                    <button class="hierarchy-opt-btn" onclick="selectCategory('modulos')"><span><i class="ph-bold ph-folders"></i> Módulos</span> <i class="ph-bold ph-caret-right"></i></button>
-                                    <button class="hierarchy-opt-btn" onclick="selectCategory('aulas')"><span><i class="ph-bold ph-book-open"></i> Aulas do Módulo</span> <i class="ph-bold ph-caret-right"></i></button>
-                                    <button class="hierarchy-opt-btn" onclick="selectCategory('provas')"><span><i class="ph-bold ph-exam"></i> Provas</span> <i class="ph-bold ph-caret-right"></i></button>
-                                </div>
-                            </div>
-
-                            <!-- PASSO 3: ITEM FINAL -->
-                            <div class="hierarchy-step" id="step-items" style="display: none;">
-                                <div class="hierarchy-step-title" id="items-step-title"><i class="ph-bold ph-list-checks"></i> 3. Selecione o Simulado</div>
-                                <div class="hierarchy-options-grid" id="grid-items"></div>
-                            </div>
-
-                            <!-- BOTÃO DE AÇÃO PARA INICIAR -->
-                            <div id="start-action-container" style="display: none; margin-top: 10px;">
-                                <button class="btn-hub-action" onclick="startSelectedSimulado()" aria-label="Iniciar Simulado Selecionado">
-                                    <i class="ph-bold ph-rocket-launch"></i> Iniciar Simulado Selecionado
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
 
                 <!-- TELA REVISÃO DIÁRIA / FLASHCARDS (SPACED REPETITION) -->
@@ -2196,7 +2153,7 @@
 
     <script>
         /* ==========================================================================
-           1. BANCO DE DADOS COMPLETO DE FARMACOLOGIA (FALLBACK)
+           1. BANCO DE DADOS COMPLETO DE FARMACOLOGIA
            ========================================================================== */
         const objectiveQuestions = [
             {
@@ -2795,69 +2752,6 @@
             }
         ];
 
-        /* ==========================================================================
-           ESTRUTURA HIERÁRQUICA E BANCO DE MATÉRIAS
-           ========================================================================== */
-        const subjectsData = [
-            {
-                id: 'farmacologia',
-                title: 'Farmacologia',
-                icon: 'ph-pill',
-                description: 'Estudo dos fármacos autônomos, cardiovasculares e neurofarmacologia.',
-                bimestres: {
-                    '1º Bimestre': {
-                        modulos: [
-                            { name: 'Módulo 1: Sistema Nervoso Autônomo', questions: objectiveQuestions.slice(0, 15) },
-                            { name: 'Módulo 2: Farmacologia Cardiovascular', questions: objectiveQuestions.slice(3, 20) }
-                        ],
-                        aulas: [
-                            { name: 'Aula 1: Agonistas Adrenérgicos', questions: objectiveQuestions.slice(0, 5) },
-                            { name: 'Aula 2: Diuréticos e Anti-hipertensivos', questions: objectiveQuestions.slice(3, 12) },
-                            { name: 'Aula 3: Sistema Renina-Angiotensina', questions: objectiveQuestions.slice(9, 15) }
-                        ],
-                        provas: [
-                            { name: 'Prova P1 Farmacologia', questions: objectiveQuestions.slice(0, 20) }
-                        ]
-                    },
-                    '2º Bimestre': {
-                        modulos: [
-                            { name: 'Módulo 3: Bloqueadores Neuromusculares', questions: objectiveQuestions.slice(25, 37) },
-                            { name: 'Módulo 4: Anticolinérgicos e SNC', questions: objectiveQuestions.slice(28, 42) }
-                        ],
-                        aulas: [
-                            { name: 'Aula 4: Antagonistas Muscarínicos', questions: objectiveQuestions.slice(25, 33) },
-                            { name: 'Aula 5: Anticolinesterásicos & Alzheimer', questions: objectiveQuestions.slice(34, 42) }
-                        ],
-                        provas: [
-                            { name: 'Avaliação de Farmacologia (P2)', questions: objectiveQuestions }
-                        ]
-                    }
-                }
-            },
-            {
-                id: 'fisiologia',
-                title: 'Fisiologia Médica',
-                icon: 'ph-heartbeat',
-                description: 'Fisiologia cardiovascular, renal, respiratória e neurofisiologia.',
-                bimestres: {
-                    '1º Bimestre': {
-                        modulos: [{ name: 'Módulo 1: Fisiologia Renal e Cardíaca', questions: objectiveQuestions.slice(3, 15) }],
-                        aulas: [{ name: 'Aula 1: Filtração Glomerular e Hemodinâmica', questions: objectiveQuestions.slice(3, 10) }],
-                        provas: [{ name: 'Prova P1 Fisiologia', questions: objectiveQuestions.slice(3, 15) }]
-                    }
-                }
-            }
-        ];
-
-        /* ==========================================================================
-           2. ESTADO GLOBAL E MOTOR DO SISTEMA
-           ========================================================================== */
-        let currentSubject = null;
-        let selectedBimestre = null;
-        let selectedCategoryType = null; // 'modulos', 'aulas', 'provas'
-        let selectedSimuladoItem = null;
-
-        let currentModuleType = 'objective'; 
         let currentQuestions = [...objectiveQuestions];
         let currentQIndex = 0;
         let userAnswers = []; 
@@ -2924,7 +2818,6 @@
             loadState();
             loadFlashcards();
             renderHistory();
-            renderSubjectsBentoGrid();
             initKeyboardShortcuts();
             initTouchSwipeGestures();
             checkFirstVisitOnboarding();
@@ -2938,138 +2831,11 @@
                     if (Array.isArray(data) && data.length > 0) {
                         objectiveQuestions.length = 0;
                         data.forEach(q => objectiveQuestions.push(q));
-                        renderSubjectsBentoGrid();
                     }
                 })
                 .catch(() => {
                     // Mantém banco de dados local fallback
                 });
-        }
-
-        /* NAVEGAÇÃO BENTO BOX E HIERARQUIA NO HUB */
-        function renderSubjectsBentoGrid() {
-            const grid = document.getElementById('subjects-bento-grid');
-            if (!grid) return;
-            grid.innerHTML = '';
-
-            subjectsData.forEach(subject => {
-                const card = document.createElement('div');
-                card.className = 'bento-subject-card';
-                card.onclick = () => selectSubject(subject.id);
-                card.innerHTML = `
-                    <div>
-                        <div class="bento-subject-header">
-                            <div class="bento-subject-icon"><i class="ph-bold ${subject.icon}"></i></div>
-                            <i class="ph-bold ph-caret-right" style="color: var(--text-muted);"></i>
-                        </div>
-                        <div class="bento-subject-title">${subject.title}</div>
-                        <div class="bento-subject-desc">${subject.description}</div>
-                    </div>
-                    <div style="font-size: 0.8rem; font-weight: 700; color: var(--purple-primary);">Acessar Bimestres & Módulos →</div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        function selectSubject(subjectId) {
-            currentSubject = subjectsData.find(s => s.id === subjectId);
-            if (!currentSubject) return;
-
-            document.getElementById('hub-subject-selection').style.display = 'none';
-            document.getElementById('hub-hierarchy-selection').style.display = 'block';
-            document.getElementById('selected-subject-title').innerText = currentSubject.title;
-
-            selectedBimestre = null;
-            selectedCategoryType = null;
-            selectedSimuladoItem = null;
-
-            document.getElementById('step-category').style.display = 'none';
-            document.getElementById('step-items').style.display = 'none';
-            document.getElementById('start-action-container').style.display = 'none';
-
-            renderBimestres();
-        }
-
-        function backToSubjects() {
-            document.getElementById('hub-hierarchy-selection').style.display = 'none';
-            document.getElementById('hub-subject-selection').style.display = 'block';
-        }
-
-        function renderBimestres() {
-            const grid = document.getElementById('grid-bimestres');
-            grid.innerHTML = '';
-
-            Object.keys(currentSubject.bimestres).forEach(bimName => {
-                const btn = document.createElement('button');
-                btn.className = 'hierarchy-opt-btn';
-                btn.innerHTML = `<span><i class="ph-bold ph-calendar-blank"></i> ${bimName}</span> <i class="ph-bold ph-caret-right"></i>`;
-                btn.onclick = () => selectBimestre(bimName, btn);
-                grid.appendChild(btn);
-            });
-        }
-
-        function selectBimestre(bimName, btnElement) {
-            selectedBimestre = bimName;
-            document.querySelectorAll('#grid-bimestres .hierarchy-opt-btn').forEach(b => b.classList.remove('active'));
-            if (btnElement) btnElement.classList.add('active');
-
-            document.getElementById('step-category').style.display = 'block';
-            document.getElementById('step-items').style.display = 'none';
-            document.getElementById('start-action-container').style.display = 'none';
-
-            document.querySelectorAll('#grid-categories .hierarchy-opt-btn').forEach(b => b.classList.remove('active'));
-        }
-
-        function selectCategory(catType) {
-            selectedCategoryType = catType;
-            
-            document.querySelectorAll('#grid-categories .hierarchy-opt-btn').forEach(b => {
-                if (b.getAttribute('onclick').includes(catType)) b.classList.add('active');
-                else b.classList.remove('active');
-            });
-
-            document.getElementById('step-items').style.display = 'block';
-            document.getElementById('start-action-container').style.display = 'none';
-
-            const titlesMap = { 'modulos': 'Módulos', 'aulas': 'Aulas', 'provas': 'Provas' };
-            document.getElementById('items-step-title').innerHTML = `<i class="ph-bold ph-list-checks"></i> 3. Selecione (${titlesMap[catType]})`;
-
-            renderItems();
-        }
-
-        function renderItems() {
-            const grid = document.getElementById('grid-items');
-            grid.innerHTML = '';
-
-            const bimData = currentSubject.bimestres[selectedBimestre];
-            const items = bimData ? bimData[selectedCategoryType] : [];
-
-            if (!items || items.length === 0) {
-                grid.innerHTML = '<p style="font-size: 0.88rem; color: var(--text-muted); grid-column: span 12;">Nenhum item disponível para este período.</p>';
-                return;
-            }
-
-            items.forEach((item, idx) => {
-                const btn = document.createElement('button');
-                btn.className = 'hierarchy-opt-btn';
-                btn.innerHTML = `<span><i class="ph-bold ph-check-square-offset"></i> ${item.name}</span> <i class="ph-bold ph-play"></i>`;
-                btn.onclick = () => selectSimuladoItem(item, btn);
-                grid.appendChild(btn);
-            });
-        }
-
-        function selectSimuladoItem(item, btnElement) {
-            selectedSimuladoItem = item;
-            document.querySelectorAll('#grid-items .hierarchy-opt-btn').forEach(b => b.classList.remove('active'));
-            if (btnElement) btnElement.classList.add('active');
-
-            document.getElementById('start-action-container').style.display = 'block';
-        }
-
-        function startSelectedSimulado() {
-            if (!selectedSimuladoItem) return;
-            const customQs = selectedSimuladoItem.questions || objectiveQuestions;
-            startModuleWithQuestions(customQs, selectedSimuladoItem.name);
         }
 
         // SWIPE TOUCH GESTURES NO MOBILE
@@ -3360,15 +3126,9 @@
         }
 
         function startModule(moduleType) {
-            startModuleWithQuestions(objectiveQuestions, 'SIMULADO FARMACOLOGIA');
-        }
-
-        // MOTOR DE INICIALIZAÇÃO DE MÓDULO COM QUESTÕES DINÂMICAS E RANDOMIZAÇÃO
-        function startModuleWithQuestions(questionsArray, titleLabel) {
-            currentModuleType = 'objective';
             gameMode = document.getElementById('game-mode-select').value;
 
-            let baseQs = questionsArray.map(q => ({...q}));
+            let baseQs = objectiveQuestions.map(q => ({...q}));
 
             const shuffleQ = document.getElementById('chk-shuffle-q').checked;
             const shuffleOpt = document.getElementById('chk-shuffle-opt').checked;
@@ -3403,8 +3163,7 @@
             isPenActive = false;
             isEraserActive = false;
 
-            const badgeText = titleLabel ? titleLabel.toUpperCase() : 'SIMULADO';
-            document.getElementById('quiz-title-badge').innerText = `${badgeText} (${gameMode.toUpperCase()})`;
+            document.getElementById('quiz-title-badge').innerText = `SIMULADO FARMACOLOGIA (${gameMode.toUpperCase()})`;
             document.getElementById('quiz-title-badge').style.color = 'var(--purple-primary)';
 
             document.getElementById('hub-screen').style.display = 'none';
@@ -3956,7 +3715,6 @@
             document.getElementById('flashcard-screen').style.display = 'none';
             document.getElementById('report-screen').style.display = 'block';
 
-            const editionName = selectedSimuladoItem ? selectedSimuladoItem.name : 'SIMULADO MEDHUB';
             document.getElementById('rep-score-big').innerText = `${overallPercent}%`;
             
             const scoreRing = document.getElementById('score-ring');
@@ -4017,7 +3775,7 @@
             if (overallPercent >= 80) unlockBadge('badge-master');
 
             renderRadarChart(radarLabels, radarData);
-            saveAttemptToHistory(editionName, overallPercent, score, `${minsStr}:${secsStr}`);
+            saveAttemptToHistory("SIMULADO FARMACOLOGIA", overallPercent, score, `${minsStr}:${secsStr}`);
             saveState();
         }
 
@@ -4327,12 +4085,11 @@
             });
 
             const overallPercent = answered > 0 ? Math.round((correct / currentQuestions.length) * 100) : 0;
-            const editionName = selectedSimuladoItem ? selectedSimuladoItem.name : 'SIMULADO MEDHUB';
 
             let text = `==================================================\n`;
             text += `   RELATÓRIO E ANOTAÇÕES - MEDHUB\n`;
             text += `==================================================\n\n`;
-            text += `Módulo: ${editionName}\n`;
+            text += `Módulo: SIMULADO FARMACOLOGIA\n`;
             text += `Aproveitamento Geral: ${overallPercent}%\n`;
             text += `Questões Respondidas: ${answered} de ${currentQuestions.length}\n`;
             text += `Pontuação Total: ${score} PTS\n\n`;
@@ -4398,7 +4155,6 @@
 
         function saveState() {
             const state = {
-                currentModuleType,
                 userAnswers,
                 userConfidence,
                 questionTimes,

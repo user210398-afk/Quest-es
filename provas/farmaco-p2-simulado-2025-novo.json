@@ -2,6 +2,7 @@
   "id": "farmaco-p2-simulado-2025-novo",
   "titulo": "Simulado de Farmacologia 2025 - Questões 04 a 45",
   "materia": "Farmacologia",
+  "divisao": "P2",
   "tipo_prova": "objetiva",
   "total_questoes": 42,
   "questoes": [
